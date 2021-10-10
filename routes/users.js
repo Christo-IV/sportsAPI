@@ -1,7 +1,8 @@
+const router = require('express').Router();
 const User = require('../models/User')
 const bcrypt = require('bcrypt');
 
-module.exports = async (req, res) => {
+module.exports = router.post('/', async (req, res) => {
     try {
 
         // Set User model (?)
@@ -42,4 +43,4 @@ module.exports = async (req, res) => {
         // 500 - Unknown server error
         return res.status(500).send({error: e.message});
     }
-}
+})
