@@ -7,12 +7,12 @@ const {verifyToken} = require('../middlewares');
 module.exports = router.post('/', async (req, res) => {
 
     // Validate parameters
-    if (typeof req.body.password === 'undefined' || typeof req.body.username === 'undefined') {
+    if (typeof req.body.password === 'undefined' || typeof req.body.email === 'undefined') {
         return res.status(400).send({error: 'Missing parameters'})
     }
 
     // Retrieve user from Mongo by username
-    const user = await User.findOne({username: req.body.username}).exec();
+    const user = await User.findOne({email: req.body.email}).exec();
 
     // Validate username and password
     if (!user || !await bcrypt.compare(req.body.password, user.password)) {

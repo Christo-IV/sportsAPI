@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const User = require('../models/User');
+const Session = require('../models/Session');
 const bcrypt = require('bcrypt');
-const Account = require('../models/Account');
 const {verifyToken} = require('../middlewares');
 
 module.exports = router.post('/', async (req, res) => {
@@ -9,8 +9,7 @@ module.exports = router.post('/', async (req, res) => {
 
         // Create user
         const user = await new User({
-            "name": req.body.name,
-            "username": req.body.username,
+            "email": req.body.email,
             "password": req.body.password
         }).save();
 
@@ -23,16 +22,7 @@ module.exports = router.post('/', async (req, res) => {
             })
         });
 
-        // Create bank account
-        await new Account({
-            "userId": user._id,
-            "name": "Main",
-            "balance": 10000,
-            "currency": "EUR",
-            "number": Math.random().toString(36).substr(2, 9)
-        }).save();
-
-        // 201 - Created successfully
+        // 201 - User created successfully
         res.status(201).end();
     } catch (e) {
 
@@ -56,14 +46,32 @@ module.exports = router.post('/', async (req, res) => {
     }
 })
 
+module.exports = router.post('/exercises',verifyToken, async(req, res) => {
+    try {
+
+        // Check if request body has exercise ID
+        if(!req.body.exercises) {
+            return res.status(400).send({error: 'Missing exercise ID'});
+        }
+
+        //const session = await Session.findOne({_id: req.sessionId});
+
+        console.log(req.sessionId);
+
+        // 201 - Exercise created successfully
+        return res.status(201).end();
+    } catch (e) {
+
+        // 500 - Internal server error
+        return res.status(500).sent({error: e.message});
+    }
+})
+
 module.exports = router.get('/current', verifyToken, async(req, res) => {
     try {
 
-        // Get accounts
-        const accounts = await Account.find({userId: req.userId});
-
         // 200 - OK
-        return res.status(200).send(accounts);
+        return res.status(200).send("[PH] This should return everything relating to the user?");
     } catch(e) {
 
         // 500 - Internal server error
